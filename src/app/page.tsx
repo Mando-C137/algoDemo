@@ -8,6 +8,7 @@ export default function Home() {
       <main className="flex min-h-screen flex-col items-center  gap-4 px-16 pt-4  w-full">
         <Algoshow></Algoshow>
       </main>
+      <footer className="h-28"></footer>
     </>
   );
 }

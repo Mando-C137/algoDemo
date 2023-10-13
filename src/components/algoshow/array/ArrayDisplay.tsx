@@ -11,10 +11,8 @@ const ArrayDisplay = ({ isShuffling, swapPair, horizontal, value }: Props) => {
   return (
     <div
       className={`flex ${
-        horizontal
-          ? "flex-col h-[696px] w-[210px] "
-          : "flex-row w-[696px] h-[210px]"
-      } gap-[4px] flex-shrink-0 bg-slate-100 ring-1 ring-slate-700`}
+        horizontal ? "flex-col  " : "flex-row "
+      } gap-[4px] flex-shrink-0 bg-slate-100 ring-1 ring-slate-700 min-w-[9rem]`}
     >
       {value.map((num, idx) => (
         <div

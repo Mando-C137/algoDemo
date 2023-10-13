@@ -20,7 +20,7 @@ const Algoshow = () => {
   };
 
   const [array, setArray] = useState(() =>
-    Array.from({ length: 70 }, (_x, i) => i + 1)
+    Array.from({ length: 40 }, (_x, i) => i + 1)
   );
   const [horizontal, setHorizontal] = useState<"horizontal" | "vertical">(
     "vertical"
@@ -110,45 +110,55 @@ const Algoshow = () => {
   return (
     <>
       <div className="flex items-center p-4">
-        <h1 className="text-4xl text-sky-500">Sort Algo Visualization</h1>
+        <h1 className="text-xl md:text-4xl text-sky-500">
+          Sort Algo Visualization
+        </h1>
       </div>
 
       {/* container of form and display*/}
-      <div className="flex flex-col gap-2 lg:flex-row ">
+      <div className="flex flex-col md:flex-row gap-2 max-w-full">
         <div className="ring-1 ring-slate-950 p-4 flex flex-col gap-2 min-w-36">
-          <div className="flex gap-4">
-            <p className="text-lg text-slate-950 ">Ausrichtung:</p>
+          <div className="flex gap-4 items-center w-[50%]">
+            <p className="text-slate-950 text-sm md:text-lg  ">Balken:</p>
             <SortAlgorithmListbox
               value={horizontal}
               setValue={setHorizontal}
               options={["horizontal", "vertical"]}
             ></SortAlgorithmListbox>
           </div>
-          <div className="flex gap-4">
-            <p className="text-lg text-slate-950 ">Algorithmus:</p>
+          <div className="flex gap-4 items-center w-[50%]">
+            <p className=" text-slate-950 text-sm md:text-lg justify-between ">
+              Algorithmus:
+            </p>
             <SortAlgorithmListbox
               options={["bubbleSort", "selectionSort", "insertionSort"]}
               value={algorithm}
               setValue={setAlgorithm}
             ></SortAlgorithmListbox>
           </div>
-          <div className="flex justify-end gap-2 mt-auto">
+          <div className="flex justify-end gap-2 mt-4">
             <button
               disabled={isShuffling || isSorting}
               onClick={shuffleAnimation}
-              className="text-md text-slate-950 bg-slate-50 ring-1 ring-slate-950 p-2 rounded-lg flex gap-2"
+              className="text-sm  md:text-md text-slate-950 bg-slate-50 ring-1 ring-slate-950 p-1 md:p-2 rounded-lg flex gap-2 items-center"
             >
               <RandomIcon
-                className={`${isShuffling ? "animate-spin" : ""} h-6 w-6 `}
+                className={`${
+                  isShuffling ? "animate-spin" : ""
+                } h-4 w-4  md:h-6 md:w-6 `}
               ></RandomIcon>
               Shuffle
             </button>
             <button
               onClick={sortArray}
               disabled={isShuffling || isSorting}
-              className="text-md text-slate-950 bg-slate-50 ring-1 ring-slate-950 p-2 rounded-lg flex gap-2"
+              className="text-sm md:text-md text-slate-950 bg-slate-50 ring-1 ring-slate-950 p-1 md:p-2 rounded-lg flex gap-2 items-center"
             >
-              <SortIcon className="h-6 w-6"></SortIcon>
+              <SortIcon
+                className={`${
+                  isSorting ? "animate-bounce" : ""
+                } h-4 w-4 md:h-6 md:w-6`}
+              ></SortIcon>
               Sort
             </button>
           </div>
