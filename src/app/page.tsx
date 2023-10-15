@@ -1,14 +1,10 @@
-import Algoshow from "../components/algoshow/Algoshow";
-import Header from "../components/ui/header/Header";
+import { redirect } from "next/navigation";
+import React from "react";
 
-export default function Home() {
-  return (
-    <>
-      <Header></Header>
-      <main className="flex min-h-screen flex-col items-center  gap-4 px-16 pt-4  w-full">
-        <Algoshow></Algoshow>
-      </main>
-      <footer className="h-28"></footer>
-    </>
-  );
-}
+type Props = {};
+
+const INDEX = (props: Props) => {
+  redirect("/sort");
+};
+
+export default INDEX;
