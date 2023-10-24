@@ -1,22 +1,45 @@
 "use client";
-import React, { useEffect, useId, useReducer } from "react";
+import React, { useEffect, useId, useReducer, useState } from "react";
 import {
   Move,
   PuzzleType,
   availableMoves as computeAllowedMoves,
   createPuzzle,
   move,
+  randomizePuzzle,
 } from "../../utils/puzzle";
+import RandomIcon from "../../components/ui/icons/RandomIcon";
+import {
+  PuzzleSearchNode,
+  promisedAstarSearch,
+} from "../../utils/algos/search";
 
 const GRID_LENGTH = 3.5;
 
-const puzzleReducer: React.Reducer<PuzzleType, Move> = (puzzle, action) => {
-  return move(puzzle, action);
+const puzzleReducer: React.Reducer<
+  PuzzleType,
+  Move | { type: "shuffle"; iterations: number }
+> = (puzzle, action) => {
+  if (typeof action === "string") {
+    return move(puzzle, action);
+  }
+  return randomizePuzzle(puzzle, action.iterations);
 };
 
 const Page = () => {
-  const [puzzle, dispatchPuzzle] = useReducer(puzzleReducer, createPuzzle(6));
+  const [puzzle, dispatchPuzzle] = useReducer(puzzleReducer, createPuzzle(3));
+  const [loading, setLoading] = useState("Solve");
+  const shufflePuzzle = () => {
+    dispatchPuzzle({ iterations: 50, type: "shuffle" });
+  };
+  const solvePuzzle = async () => {
+    setLoading("Solving...");
 
+    const result = await promisedAstarSearch(puzzle);
+
+    result && setLoading("Solved [" + result.join(", ") + "]");
+    result == null && setLoading("No Solution");
+  };
   //useEffect(() => {
   //}, [puzzle]);
 
@@ -24,6 +47,19 @@ const Page = () => {
   return (
     <div className="flex flex-col items-center justify-center h-full font-medium gap-2">
       <Controls allowedMoves={allowedMoves} dispatch={dispatchPuzzle} />
+      <button
+        onClick={solvePuzzle}
+        className="text-sm  md:text-md text-slate-950 bg-slate-50 ring-1 ring-slate-950 p-1 md:p-2 rounded-lg flex gap-2 items-center"
+      >
+        {loading}
+      </button>
+      <button
+        onClick={shufflePuzzle}
+        className="text-sm  md:text-md text-slate-950 bg-slate-50 ring-1 ring-slate-950 p-1 md:p-2 rounded-lg flex gap-2 items-center"
+      >
+        <RandomIcon className={`h-4 w-4  md:h-6 md:w-6 `}></RandomIcon>
+        Shuffle
+      </button>
       <Puzzle value={puzzle} />
     </div>
   );
@@ -63,37 +99,33 @@ type ControlsProps = {
 };
 
 const Controls = ({ allowedMoves, dispatch }: ControlsProps) => {
+  const ControlButton = ({ move }: { move: Move }) => {
+    return (
+      <button
+        className="capitalize text-sm md:text-md text-slate-950 bg-slate-50 ring-1 ring-slate-950 p-1 md:p-2 rounded-lg flex w-16 gap-2 items-center justify-center disabled:opacity-20"
+        disabled={!allowedMoves.includes(move)}
+        onClick={() => dispatch(move)}
+      >
+        {move}
+      </button>
+    );
+  };
+
   return (
     <div className="">
       <div className="grid grid-cols-3 gap-1">
-        <button
-          className="text-sm md:text-md text-slate-950 bg-slate-50 ring-1 ring-slate-950 p-1 md:p-2 rounded-lg flex gap-2 items-center justify-center col-start-2 disabled:opacity-20"
-          disabled={!allowedMoves.includes("up")}
-          onClick={() => dispatch("up")}
-        >
-          Up
-        </button>
-        <button
-          className="text-sm md:text-md text-slate-950 bg-slate-50 ring-1 ring-slate-950 p-1 md:p-2 rounded-lg flex gap-2 items-center justify-center col-start-1 disabled:opacity-20"
-          disabled={!allowedMoves.includes("left")}
-          onClick={() => dispatch("left")}
-        >
-          Left
-        </button>
-        <button
-          className="text-sm md:text-md text-slate-950 bg-slate-50 ring-1 ring-slate-950 p-1 md:p-2 rounded-lg flex gap-2 items-center justify-center disabled:opacity-20"
-          disabled={!allowedMoves.includes("down")}
-          onClick={() => dispatch("down")}
-        >
-          Down
-        </button>
-        <button
-          className="text-sm md:text-md text-slate-950 bg-slate-50 ring-1 ring-slate-950 p-1 md:p-2 rounded-lg flex gap-2 items-center justify-center disabled:opacity-20"
-          disabled={!allowedMoves.includes("right")}
-          onClick={() => dispatch("right")}
-        >
-          Right
-        </button>
+        <div className="col-start-2">
+          <ControlButton move="up"></ControlButton>
+        </div>
+        <div className="col-start-1">
+          <ControlButton move="left"></ControlButton>
+        </div>
+        <div>
+          <ControlButton move="down"></ControlButton>
+        </div>
+        <div>
+          <ControlButton move="right"></ControlButton>
+        </div>
       </div>
     </div>
   );

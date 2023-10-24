@@ -68,3 +68,13 @@ export const createPuzzle = (length: 2 | 3 | 4 | 5 | 6 | 7 | 8): PuzzleType => {
     value: index + 1 === size ? null : index + 1,
   }));
 };
+
+export const randomizePuzzle = (value: PuzzleType, iterations: number = 30) => {
+  let temp = value;
+  for (let i = 0; i < iterations; i++) {
+    const moves = availableMoves(temp);
+
+    temp = move(temp, moves[Math.floor(Math.random() * moves.length)]);
+  }
+  return temp;
+};
